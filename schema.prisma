@@ -1,0 +1,195 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("SUPABASE_DATABASE_URL")
+}
+
+model User {
+  id                  String    @id
+  name                String
+  email               String    @unique
+  emailVerified       Boolean
+  image               String?
+  createdAt           DateTime
+  updatedAt           DateTime
+  onboardingCompleted Boolean   @default(false)
+  accounts            Account[]
+  sessions            Session[]
+  smes                Sme[]
+
+  @@map("user")
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String   @unique
+  createdAt DateTime
+  updatedAt DateTime
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime
+  updatedAt             DateTime
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("account")
+}
+
+model Verification {
+  id         String    @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime?
+  updatedAt  DateTime?
+
+  @@map("verification")
+}
+
+model Sme {
+  id               String            @id @default(uuid())
+  userId           String
+  businessName     String
+  slug             String            @unique
+  description      String?
+  nationalId       String?
+  cacRegistration  String?
+  logoUrl          String?
+  aiTone           String            @default("professional")
+  language         String            @default("en-US")
+  autoInvoicing    Boolean           @default(true)
+  email            String
+  whatsapp         String
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  address          String?
+  chatSessions     ChatSession[]
+  invoices         Invoice[]
+  products         Product[]
+  user             User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  telegramSessions TelegramSession[]
+  telegramUsers    TelegramUser[]
+  transactions     Transaction[]
+
+  @@map("sme")
+}
+
+model ChatSession {
+  id            String   @id @default(uuid())
+  smeId         String
+  customerEmail String   @unique
+  messages      Json     @default("[]")
+  updatedAt     DateTime @updatedAt
+  createdAt     DateTime @default(now())
+  sme           Sme      @relation(fields: [smeId], references: [id], onDelete: Cascade)
+
+  @@map("chat_session")
+}
+
+model Product {
+  id          String   @id @default(uuid())
+  smeId       String
+  name        String
+  price       Float
+  category    String?
+  size        String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  description String?
+  image       String?
+  sku         String?
+  status      String   @default("Active")
+  stock       Int      @default(1)
+  sme         Sme      @relation(fields: [smeId], references: [id], onDelete: Cascade)
+
+  @@map("product")
+}
+
+model Invoice {
+  id              String        @id @default(uuid())
+  invoiceNumber   String        @unique
+  referenceNumber String        @unique
+  smeId           String
+  customerName    String
+  customerEmail   String
+  items           Json
+  subtotal        Float
+  tax             Float
+  taxRate         Float         @default(0)
+  discount        Float
+  discountRate    Float         @default(0)
+  totalAmount     Float
+  status          String        @default("PENDING")
+  dueDate         DateTime
+  internalNotes   String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  sme             Sme           @relation(fields: [smeId], references: [id], onDelete: Cascade)
+  transactions    Transaction[]
+
+  @@map("invoice")
+}
+
+model Transaction {
+  id               String   @id @default(uuid())
+  smeId            String
+  customerName     String
+  customerEmail    String
+  customerWhatsapp String
+  items            Json     @default("[]")
+  totalAmount      Float
+  status           String   @default("PENDING")
+  paymentRef       String?
+  invoiceUrl       String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  invoiceId        String?
+  invoice          Invoice? @relation(fields: [invoiceId], references: [id])
+  sme              Sme      @relation(fields: [smeId], references: [id], onDelete: Cascade)
+
+  @@map("transaction")
+}
+
+model TelegramUser {
+  id          String   @id
+  activeSmeId String?
+  updatedAt   DateTime @updatedAt
+  createdAt   DateTime @default(now())
+  sme         Sme?     @relation(fields: [activeSmeId], references: [id])
+
+  @@map("telegram_user")
+}
+
+model TelegramSession {
+  id        String   @id @default(uuid())
+  smeId     String
+  userId    String
+  messages  Json     @default("[]")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  sme       Sme      @relation(fields: [smeId], references: [id], onDelete: Cascade)
+
+  @@unique([smeId, userId])
+  @@map("telegram_session")
+}
