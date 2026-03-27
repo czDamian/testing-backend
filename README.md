@@ -1,8 +1,8 @@
-# SmartBiz AI Marketplace Bot 🤖 🛍️
+# SmartBiz AI Telegram Bot 
 
 A smart conversational commerce platform operating natively on Telegram. This AI-first project connects small merchants and businesses (SMEs) with their end customers through an intelligent Claude 3.5 AI agent that can negotiate, search for products, and automatically generate and fulfill payment invoices.
 
-## 🚀 Key Features
+## Key Features
 
 - **AI-Native Product Discovery:** Customers can chat with the bot natively in natural language (e.g., "I need two nice wooden chairs under 3 million naira").
 - **Stateless Tool Use Context Ring:** In-memory conversational state management allowing Claude to traverse entire discovery, configuration, and invoice confirmation pipelines effortlessly via Anthropic Tool Use.
@@ -11,7 +11,7 @@ A smart conversational commerce platform operating natively on Telegram. This AI
 
 ---
 
-## 🛠️ Technology Stack
+## Technology Stack
 
 - **Framework:** Node.js (via Express)
 - **Bot Engine:** [Telegraf API](https://telegraf.js.org/)
@@ -22,7 +22,7 @@ A smart conversational commerce platform operating natively on Telegram. This AI
 
 ---
 
-## 💳 The Interswitch Payment Gateway Integration
+## The Interswitch Payment Gateway Integration
 
 A critical feature of the SmartBiz Marketplace is the way it securely and instantly captures payments **without requiring the customer to log into a separate frontend or e-commerce marketplace website**.
 
@@ -36,7 +36,7 @@ A critical feature of the SmartBiz Marketplace is the way it securely and instan
 
 ---
 
-## 📦 Getting Started / Setup
+## Getting Started / Setup
 
 1. **Clone the repo**
 2. **Install dependencies:**
@@ -66,7 +66,7 @@ A critical feature of the SmartBiz Marketplace is the way it securely and instan
 
 ---
 
-## ⚙️ Prisma V6 Migration Notice
+## Prisma V6 Migration Notice
 This service operates on the strictly-typed Prisma Client. If you execute a schema change, be completely sure to synchronize the Typescript definitions using:
 ```bash
 npx prisma generate
