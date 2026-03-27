@@ -7,7 +7,7 @@
     "dev": "tsx watch src/server.ts",
     "bot": "tsx watch src/telegram/index.ts",
     "start": "node dist/server.js",
-    "build": "tsc"
+    "build": "npx prisma generate && tsc"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0",
